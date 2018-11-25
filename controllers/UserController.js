@@ -11,11 +11,17 @@ class UserController {
         }
         User.create(newMember)
         .then(data => {
+            console.log(data, `===========`)
             res.redirect('/member/register?info=success');
             // res.send(newMember);
         })
         .catch(err => {
-            res.send({msg: `Error creating new member`, err:err});
+            switch (err.errors[0].message) {
+                case 'Validation len on password failed': err = `Password must be 6 chars minimum and max 30 chars`; break;
+                case 'Error: Email has been used': err = `Email has been used. Please use another email`
+                default: break;
+            }            
+            res.redirect(`/member/register?info=${err}`);            
         })        
     }
     
