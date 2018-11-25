@@ -17,15 +17,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         notEmpty: true,
-        len: [5,30],
-        isEmail: {
-          args: true,
-          msg: 'Email format is incorrect'
-        },
         isUnique(value) {
           return User.findOne({where: {email: value}})
           .then(data => {
-            throw new Error(`Email has been used`);
+            if(data) {
+              throw new Error(`Email has been used`);
+            }
           }) 
           .catch(err => {
             throw new Error(err);
